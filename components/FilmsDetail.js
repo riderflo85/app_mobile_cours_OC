@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { getMovieDetailFromApi, getImageFromApi } from '../API/TMBApi';
+import { FlatList } from 'react-native-gesture-handler';
 
 
 class DetailMovie extends React.Component {
@@ -10,13 +11,25 @@ class DetailMovie extends React.Component {
         super(props);
         this.state = {
             movie: undefined,
-            isLoading: true, // pour afficher le chargement par défaut, le temps d'avoir la réponse de la requette à l'API
+            isLoading: false, // pour afficher le chargement par défaut, le temps d'avoir la réponse de la requette à l'API
         }
         this.idMovie = this.props.route.params.idMovie;
     }
 
     componentDidMount() {
         // Fait parti des méthodes de classe du cycle de vie d'un component
+        const indexFavoriteMovie = this.props.favoriteMovie.findIndex(item => item.id === this.idMovie);
+        if (indexFavoriteMovie !== -1) {
+            this.setState({
+                movie: this.props.favoriteMovie[indexFavoriteMovie],
+            });
+            return;
+        }
+
+        this.setState({
+            isLoading: true
+        });
+
         getMovieDetailFromApi(this.idMovie)
         .then(data => {
             this.setState({
@@ -28,8 +41,8 @@ class DetailMovie extends React.Component {
 
     componentDidUpdate() {
         // Fait parti des méthodes de classe du cycle de vie d'un component
-        console.log('Update component');
-        console.log(this.props.favoriteMovie);
+        // console.log('Update component');
+        // console.log(this.props.favoriteMovie);
     }
 
     _displayLoading() {

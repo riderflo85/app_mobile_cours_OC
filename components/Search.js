@@ -100,6 +100,7 @@ class Search extends React.Component {
                     loadNextMovies={this._displayNewMovies}
                     page={this.page}
                     totalPages={this.totalPages}
+                    isFavoriteList={false}
                 />
                 {/* <FlatList
                     data={this.state.movies}

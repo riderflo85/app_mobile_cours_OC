@@ -27,6 +27,26 @@ function HomeStackScreen() {
 }
 
 
+const FavoriteMovieStack = createStackNavigator();
+
+function FavoriteMovieStackScreen() {
+    return (
+        <FavoriteMovieStack.Navigator>
+            <FavoriteMovieStack.Screen
+                name="My favorite movie"
+                component={Favorites}
+                options={{title: "Mes Films Favoris"}}
+            />
+            <FavoriteMovieStack.Screen
+                name="Movie detail"
+                component={DetailMovie}
+                options={{title: "Détail du film"}}
+            />
+        </FavoriteMovieStack.Navigator>
+    );
+}
+
+
 const MyTab = createBottomTabNavigator();
 
 class MyNavigation extends React.Component {
@@ -67,7 +87,7 @@ class MyNavigation extends React.Component {
                     />
                     <MyTab.Screen
                         name="Favorites movies"
-                        component={Favorites}
+                        component={FavoriteMovieStackScreen}
                         options={{ title: 'Mes Favoris' }}
                     />
                 </MyTab.Navigator>
