@@ -43,7 +43,7 @@ class FilmsList extends React.Component {
                 )}
                 onEndReachedThreshold={0.5}
                 onEndReached={() => {
-                    if (this.props.page < this.props.totalPage) {
+                    if (this.props.page < this.props.totalPages) {
                         // On appel la méthode loadMovie du component Search pour charger plus de films
                         this.props.loadNextMovies();
                     }
