@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Share, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { getMovieDetailFromApi, getImageFromApi } from '../API/TMBApi';
-import { FlatList } from 'react-native-gesture-handler';
 
 
 class DetailMovie extends React.Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -14,6 +13,25 @@ class DetailMovie extends React.Component {
             isLoading: false, // pour afficher le chargement par défaut, le temps d'avoir la réponse de la requette à l'API
         }
         this.idMovie = this.props.route.params.idMovie;
+        this._shareMovie = this._shareMovie.bind(this);
+    }
+
+    navigationOptions = ({navigation}) => {
+        const params = navigation.route.params;
+
+        if (params.movie !== undefined && Platform.OS === 'ios') {
+            navigation.setOptions({
+                headerRight: () => {
+                    <TouchableOpacity
+                        style={style.sharedIOSButton}
+                        onPress={() => params.shareMovie()}>
+                        <Image
+                            style={style.sharedButtonImage}
+                            source={require('../ic_share.png')}/>
+                    </TouchableOpacity>
+                }
+            });
+        }
     }
 
     componentDidMount() {
@@ -22,7 +40,7 @@ class DetailMovie extends React.Component {
         if (indexFavoriteMovie !== -1) {
             this.setState({
                 movie: this.props.favoriteMovie[indexFavoriteMovie],
-            });
+            }, () => { this._updateNavigationParams() });
             return;
         }
 
@@ -35,7 +53,7 @@ class DetailMovie extends React.Component {
             this.setState({
                 movie: data,
                 isLoading: false
-            });
+            }, () => { this._updateNavigationParams() });
         });
     }
 
@@ -103,13 +121,42 @@ class DetailMovie extends React.Component {
         }
     }
 
+    _shareMovie() {
+        const movieShared = this.state.movie;
+        Share.share({title: movieShared.title, message: movieShared.overview});
+    }
+
+    _displayFloatingActionButton() {
+        const movie = this.state.movie;
+
+        if (movie !== undefined && Platform.OS === 'android') {
+            return (
+                <TouchableOpacity
+                    style={style.sharedAndroidButton}
+                    onPress={() => this._shareMovie()}>
+                    <Image
+                        style={style.sharedButtonImage}
+                        source={require('../ic_share.png')}/>
+                </TouchableOpacity>
+            );
+        }
+    }
+
+    _updateNavigationParams() {
+        this.props.navigation.setParams({
+            shareMovie: this._shareMovie,
+            movie: this.state.movie
+        });
+    }
+
     render() {
-        // console.log(this.props);
+        console.log(this.props);
 
         return (
             <View style={style.main_container}>
                 {this._displayLoading()}
                 {this._displayMovieDetail()}
+                {this._displayFloatingActionButton()}
             </View>
         );
     }
@@ -157,6 +204,24 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
     },
+    sharedAndroidButton: {
+        position: 'absolute',
+        width: 60,
+        height: 60,
+        right: 30,
+        bottom: 30,
+        borderRadius: 30,
+        backgroundColor: '#e91e63',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    sharedButtonImage: {
+        width: 30,
+        height: 30,
+    },
+    sharedIOSButton: {
+        marginRight: 8,
+    }
 });
 
 const mapStateToProps = (state) => {

@@ -2,10 +2,12 @@ import React from 'react';
 import Search from '../components/Search';
 import DetailMovie from '../components/FilmsDetail'
 import Favorites from '../components/Favorites';
+import Test from '../components/Test';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const HomeStack = createStackNavigator();
 
@@ -58,7 +60,12 @@ class MyNavigation extends React.Component {
                         tabBarIcon: ({ focused, color, size}) => {
                             let iconName;
 
-                            if (route.name === 'Search movie') {
+                            if (route.name === 'Test') {
+                                iconName = focused ? 'test-tube-alt' : 'test-tube';
+
+                                return <Fontisto name={iconName} size={size} color={color}/>;
+
+                            } else if (route.name === 'Search movie') {
                                 // ES6 version
                                 iconName = focused ? 'md-search' : 'ios-search';
 
@@ -80,6 +87,11 @@ class MyNavigation extends React.Component {
                         inactiveTintColor: 'gray',
                     }}
                 >
+                    <MyTab.Screen
+                        name="Test"
+                        component={Test}
+                        options={{title: 'Test divers'}}
+                    />
                     <MyTab.Screen
                         name="Search movie"
                         component={HomeStackScreen}
